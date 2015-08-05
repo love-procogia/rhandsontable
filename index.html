@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title>rhandsontable</title>
+
+<script src="libs/jquery-2.1.2/jquery.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.1/css/readable.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.1/shim/respond.min.js"></script>
+<script src="libs/htmlwidgets-0.5/htmlwidgets.js"></script>
+<link href="libs/handsontable-0.15.1/handsontable.full.css" rel="stylesheet" />
+<script src="libs/handsontable-0.15.1/handsontable.full.js"></script>
+<script src="libs/moment-2.10.3/moment.js"></script>
+<link href="libs/pikaday-1.3.0/pikaday.css" rel="stylesheet" />
+<script src="libs/pikaday-1.3.0/pikaday.js"></script>
+<script src="libs/chroma-0.8.0/chroma.js"></script>
+<link href="libs/rhandsontable-0.1.1/rhandsontable.css" rel="stylesheet" />
+<script src="libs/sparkline-2.1.2/jquery.sparkline.js"></script>
+<script src="libs/rhandsontable-binding-0.1.1/rhandsontable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="libs/highlight/default.css"
+      type="text/css" />
+<script src="libs/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+<link rel="stylesheet" href="custom.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">rhandsontable</h1>
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#right-click-menu">Right-Click Menu</a></li>
+<li><a href="#column-types">Column Types</a></li>
+<li><a href="#numeric-formatting">Numeric Formatting</a></li>
+<li><a href="#sorting">Sorting</a></li>
+<li><a href="#addremove-rows-columns">Add/Remove Rows &amp; Columns</a></li>
+<li><a href="#dimensions-fixed-rowscolumns">Dimensions &amp; Fixed Rows/Columns</a></li>
+<li><a href="#grouping">Grouping</a></li>
+<li><a href="#borders">Borders</a></li>
+<li><a href="#validation">Validation</a></li>
+<li><a href="#conditional-formatting">Conditional Formatting</a></li>
+<li><a href="#export-to-csv">Export to CSV</a></li>
+<li><a href="#heatmap">Heatmap</a></li>
+<li><a href="#shiny">Shiny</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>rhandsontable is an htmlwidget based on the <a href="www.handsontable.com">handsontable.js</a> library.</p>
+<blockquote>
+<p>Handsontable is a data grid component with an Excel-like appearance. Built in JavaScript, it integrates with any data source with peak efficiency. It comes with powerful features like data validation, sorting, grouping, data binding, formula support or column ordering. (<a href="www.handsontable.com">via</a>)</p>
+</blockquote>
+<p>The table includes support for numeric, logical, character and Date types. Logical values will appear as check boxes, and the <a href="https://github.com/dbushell/Pikaday">pikaday.js</a> library is used to specify Date values.</p>
+</div>
+<div id="right-click-menu" class="section level2">
+<h2>Right-Click Menu</h2>
+<p>Right-clicking in a cell will enable a context menu that includes customizable table actions. For shiny apps, formatting and comment updates made via the context menu are not currently retained.</p>
+</div>
+<div id="column-types" class="section level2">
+<h2>Column Types</h2>
+<p>rhandsontable attempts to map R classes to an appropriate handsontable type: <code>string</code>, <code>numeric</code> and <code>date</code>. Factors will be mapped to <code>dropdown</code>, and <code>NA</code> values will be displayed as blank cells.</p>
+<pre class="r"><code>DF = data.frame(val = c(NA, 2:10), 
+                bool = c(NA, rep(TRUE, 9)), 
+                big = c(NA, LETTERS[1:9]),
+                small = c(NA, factor(letters[1:9])),
+                dt = c(NA, seq(from = Sys.Date(), by = &quot;days&quot;, length.out = 9)),
+                dt_ch = c(NA, as.character(seq(from = Sys.Date(), by = &quot;days&quot;, 
+                                               length.out = 9))),
+                stringsAsFactors = FALSE)
+
+rhandsontable(DF)</code></pre>
+<p><div id="htmlwidget-420" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-420">{"x":{"data":[{"val":"NA","bool":"NA","big":"NA","small":"NA","dt":"NA","dt_ch":"NA"},{"val":2,"bool":true,"big":"A","small":1,"dt":16652,"dt_ch":"2015-08-05"},{"val":3,"bool":true,"big":"B","small":2,"dt":16653,"dt_ch":"2015-08-06"},{"val":4,"bool":true,"big":"C","small":3,"dt":16654,"dt_ch":"2015-08-07"},{"val":5,"bool":true,"big":"D","small":4,"dt":16655,"dt_ch":"2015-08-08"},{"val":6,"bool":true,"big":"E","small":5,"dt":16656,"dt_ch":"2015-08-09"},{"val":7,"bool":true,"big":"F","small":6,"dt":16657,"dt_ch":"2015-08-10"},{"val":8,"bool":true,"big":"G","small":7,"dt":16658,"dt_ch":"2015-08-11"},{"val":9,"bool":true,"big":"H","small":8,"dt":16659,"dt_ch":"2015-08-12"},{"val":10,"bool":true,"big":"I","small":9,"dt":16660,"dt_ch":"2015-08-13"}],"rClass":"data.frame","rColClasses":{"val":"integer","bool":"logical","big":"character","small":"integer","dt":"integer","dt_ch":"character"},"selectCallback":false,"colHeaders":["val","bool","big","small","dt","dt_ch"],"rowHeaders":["1","2","3","4","5","6","7","8","9","10"],"columns":[{"type":"numeric","format":"0","renderer":"customRenderer"},{"type":"checkbox","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer"},{"type":"numeric","format":"0","renderer":"customRenderer"},{"type":"numeric","format":"0","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":false,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer","columns.5.renderer"]}</script></p>
+<div id="dropdownautocomplete" class="section level3">
+<h3>Dropdown/Autocomplete</h3>
+<p>To control character column values, the column type can be specified as <code>dropdown</code> or <code>autocomplete</code>.</p>
+<pre class="r"><code>DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = &quot;days&quot;, length.out = 10),
+                stringsAsFactors = FALSE)
+
+# try updating big to a value not in the dropdown
+rhandsontable(DF, rowHeaders = NULL) %&gt;%
+  hot_col(col = &quot;big&quot;, type = &quot;dropdown&quot;, source = LETTERS) %&gt;%
+  hot_col(col = &quot;small&quot;, type = &quot;autocomplete&quot;, source = letters,
+          strict = FALSE)</code></pre>
+<p><div id="htmlwidget-1453" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-1453">{"x":{"data":[{"val":1,"bool":true,"big":"A","small":"a","dt":"08/05/2015"},{"val":2,"bool":true,"big":"B","small":"b","dt":"08/06/2015"},{"val":3,"bool":true,"big":"C","small":"c","dt":"08/07/2015"},{"val":4,"bool":true,"big":"D","small":"d","dt":"08/08/2015"},{"val":5,"bool":true,"big":"E","small":"e","dt":"08/09/2015"},{"val":6,"bool":true,"big":"F","small":"f","dt":"08/10/2015"},{"val":7,"bool":true,"big":"G","small":"g","dt":"08/11/2015"},{"val":8,"bool":true,"big":"H","small":"h","dt":"08/12/2015"},{"val":9,"bool":true,"big":"I","small":"i","dt":"08/13/2015"},{"val":10,"bool":true,"big":"J","small":"j","dt":"08/14/2015"}],"rClass":"data.frame","rColClasses":{"val":"integer","bool":"logical","big":"character","small":"character","dt":"Date"},"selectCallback":false,"colHeaders":["val","bool","big","small","dt"],"rowHeaders":null,"columns":[{"type":"numeric","format":"0","renderer":"customRenderer"},{"type":"checkbox","renderer":"customRenderer"},{"type":"dropdown","renderer":"customRenderer","source":["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]},{"type":"autocomplete","renderer":"customRenderer","source":["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"],"strict":false},{"type":"date","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":false,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+</div>
+<div id="password" class="section level3">
+<h3>Password</h3>
+<p>A column can also be specified as a <code>password</code> type, and the whole table can to set to <code>readOnly</code> to prevent the user from making changes. Comments (hover) can also be added to individual cells and will appear as red flags in the upper right of the cell. Comments can also be added via the right-click context menu, but these updates will not currently be retained by shiny.</p>
+<pre class="r"><code>DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = &quot;days&quot;, length.out = 10),
+                stringsAsFactors = FALSE)
+
+rhandsontable(DF, readOnly = TRUE) %&gt;%
+  hot_col(&quot;small&quot;, &quot;password&quot;) %&gt;%
+  hot_cell(1, 1, &quot;Test comment&quot;)</code></pre>
+<p><div id="htmlwidget-535" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-535">{"x":{"data":[{"val":1,"bool":true,"big":"A","small":"a","dt":"08/05/2015"},{"val":2,"bool":true,"big":"B","small":"b","dt":"08/06/2015"},{"val":3,"bool":true,"big":"C","small":"c","dt":"08/07/2015"},{"val":4,"bool":true,"big":"D","small":"d","dt":"08/08/2015"},{"val":5,"bool":true,"big":"E","small":"e","dt":"08/09/2015"},{"val":6,"bool":true,"big":"F","small":"f","dt":"08/10/2015"},{"val":7,"bool":true,"big":"G","small":"g","dt":"08/11/2015"},{"val":8,"bool":true,"big":"H","small":"h","dt":"08/12/2015"},{"val":9,"bool":true,"big":"I","small":"i","dt":"08/13/2015"},{"val":10,"bool":true,"big":"J","small":"j","dt":"08/14/2015"}],"rClass":"data.frame","rColClasses":{"val":"integer","bool":"logical","big":"character","small":"character","dt":"Date"},"selectCallback":false,"colHeaders":["val","bool","big","small","dt"],"rowHeaders":["1","2","3","4","5","6","7","8","9","10"],"columns":[{"type":"numeric","format":"0","readOnly":true,"renderer":"customRenderer"},{"type":"checkbox","readOnly":true,"renderer":"customRenderer"},{"type":"text","readOnly":true,"renderer":"customRenderer"},{"type":"password","readOnly":true,"renderer":"customRenderer"},{"type":"date","readOnly":true,"renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv","cell":[{"row":1,"col":1,"comment":"Test comment"}],"comments":true},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+</div>
+<div id="sparkline" class="section level3">
+<h3>Sparkline</h3>
+<p>New in version 0.2, <a href="http://omnipotent.net/jquery.sparkline/">sparkline.js</a> charts can be added to the table.</p>
+<pre class="r"><code>DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = &quot;days&quot;, length.out = 10),
+                stringsAsFactors = FALSE)
+
+DF$chart = rep(jsonlite::toJSON(list(values=rnorm(10), 
+                                     options = list(type = &quot;bar&quot;))), 10)
+
+rhandsontable(DF, rowHeaders = NULL) %&gt;%
+  hot_col(&quot;chart&quot;, renderer = htmlwidgets::JS(&quot;renderSparkline&quot;))</code></pre>
+<p><div id="htmlwidget-7092" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-7092">{"x":{"data":[{"val":1,"bool":true,"big":"A","small":"a","dt":"08/05/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":2,"bool":true,"big":"B","small":"b","dt":"08/06/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":3,"bool":true,"big":"C","small":"c","dt":"08/07/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":4,"bool":true,"big":"D","small":"d","dt":"08/08/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":5,"bool":true,"big":"E","small":"e","dt":"08/09/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":6,"bool":true,"big":"F","small":"f","dt":"08/10/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":7,"bool":true,"big":"G","small":"g","dt":"08/11/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":8,"bool":true,"big":"H","small":"h","dt":"08/12/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":9,"bool":true,"big":"I","small":"i","dt":"08/13/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"},{"val":10,"bool":true,"big":"J","small":"j","dt":"08/14/2015","chart":"{\"values\":[-0.0313,0.9792,-0.0085,0.5216,-0.2011,-1.0119,0.0435,1.0994,-0.9223,0.801],\"options\":{\"type\":[\"bar\"]}}"}],"rClass":"data.frame","rColClasses":{"val":"integer","bool":"logical","big":"character","small":"character","dt":"Date","chart":"character"},"selectCallback":false,"colHeaders":["val","bool","big","small","dt","chart"],"rowHeaders":null,"columns":[{"type":"numeric","format":"0","renderer":"customRenderer"},{"type":"checkbox","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer"},{"type":"date","renderer":"customRenderer"},{"type":"text","renderer":"renderSparkline"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":false,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer","columns.5.renderer"]}</script></p>
+</div>
+</div>
+<div id="numeric-formatting" class="section level2">
+<h2>Numeric Formatting</h2>
+<p>Numeric columns are formatted using the <a href="http://numeraljs.com/">numeral.js</a> library.</p>
+<pre class="r"><code>DF = data.frame(int = 1:10, float = rnorm(10))
+
+rhandsontable(DF, readOnly = TRUE) %&gt;%
+  hot_col(&quot;float&quot;, format = &quot;0.0&quot;)</code></pre>
+<p><div id="htmlwidget-9135" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-9135">{"x":{"data":[{"int":1,"float":0.2269},{"int":2,"float":0.8813},{"int":3,"float":1.0023},{"int":4,"float":0.3162},{"int":5,"float":-0.6665},{"int":6,"float":-0.9367},{"int":7,"float":0.6479},{"int":8,"float":0.3741},{"int":9,"float":-0.5291},{"int":10,"float":-0.9555}],"rClass":"data.frame","rColClasses":{"int":"integer","float":"numeric"},"selectCallback":false,"colHeaders":["int","float"],"rowHeaders":["1","2","3","4","5","6","7","8","9","10"],"columns":[{"type":"numeric","format":"0","readOnly":true,"renderer":"customRenderer"},{"type":"numeric","format":"0.0","readOnly":true,"renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":false,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.1.renderer"]}</script></p>
+</div>
+<div id="sorting" class="section level2">
+<h2>Sorting</h2>
+<p>Column sorting can be enabled; sorting only impacts the widget and will not reorder the original data set.</p>
+<pre class="r"><code>DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = &quot;days&quot;, length.out = 10),
+                stringsAsFactors = FALSE)
+
+rhandsontable(DF) %&gt;%
+  hot_cols(columnSorting = TRUE)</code></pre>
+<p><div id="htmlwidget-2488" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-2488">{"x":{"data":[{"val":1,"bool":true,"big":"A","small":"a","dt":"08/05/2015"},{"val":2,"bool":true,"big":"B","small":"b","dt":"08/06/2015"},{"val":3,"bool":true,"big":"C","small":"c","dt":"08/07/2015"},{"val":4,"bool":true,"big":"D","small":"d","dt":"08/08/2015"},{"val":5,"bool":true,"big":"E","small":"e","dt":"08/09/2015"},{"val":6,"bool":true,"big":"F","small":"f","dt":"08/10/2015"},{"val":7,"bool":true,"big":"G","small":"g","dt":"08/11/2015"},{"val":8,"bool":true,"big":"H","small":"h","dt":"08/12/2015"},{"val":9,"bool":true,"big":"I","small":"i","dt":"08/13/2015"},{"val":10,"bool":true,"big":"J","small":"j","dt":"08/14/2015"}],"rClass":"data.frame","rColClasses":{"val":"integer","bool":"logical","big":"character","small":"character","dt":"Date"},"selectCallback":false,"colHeaders":["val","bool","big","small","dt"],"rowHeaders":["1","2","3","4","5","6","7","8","9","10"],"columns":[{"type":"numeric","format":"0","renderer":"customRenderer"},{"type":"checkbox","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer"},{"type":"date","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":false,"csvFileName":"download.csv","columnSorting":true},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+</div>
+<div id="addremove-rows-columns" class="section level2">
+<h2>Add/Remove Rows &amp; Columns</h2>
+<p>With larger tables it my be desirable to highlight the row and column for a selected cell. By default a user can add or remove table rows and columns, but this functionality can be disabled.</p>
+<pre class="r"><code>DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = &quot;days&quot;, length.out = 10),
+                stringsAsFactors = FALSE)
+
+rhandsontable(DF) %&gt;%
+  hot_table(highlightCol = TRUE, highlightRow = TRUE,
+            allowRowEdit = FALSE, allowColEdit = FALSE)</code></pre>
+<p><div id="htmlwidget-3101" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-3101">{"x":{"data":[{"val":1,"bool":true,"big":"A","small":"a","dt":"08/05/2015"},{"val":2,"bool":true,"big":"B","small":"b","dt":"08/06/2015"},{"val":3,"bool":true,"big":"C","small":"c","dt":"08/07/2015"},{"val":4,"bool":true,"big":"D","small":"d","dt":"08/08/2015"},{"val":5,"bool":true,"big":"E","small":"e","dt":"08/09/2015"},{"val":6,"bool":true,"big":"F","small":"f","dt":"08/10/2015"},{"val":7,"bool":true,"big":"G","small":"g","dt":"08/11/2015"},{"val":8,"bool":true,"big":"H","small":"h","dt":"08/12/2015"},{"val":9,"bool":true,"big":"I","small":"i","dt":"08/13/2015"},{"val":10,"bool":true,"big":"J","small":"j","dt":"08/14/2015"}],"rClass":"data.frame","rColClasses":{"val":"integer","bool":"logical","big":"character","small":"character","dt":"Date"},"selectCallback":false,"colHeaders":["val","bool","big","small","dt"],"rowHeaders":["1","2","3","4","5","6","7","8","9","10"],"columns":[{"type":"numeric","format":"0","renderer":"customRenderer"},{"type":"checkbox","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer"},{"type":"date","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":false,"allowColEdit":false,"csvFileName":"download.csv","ishighlight":true,"currentRowClassName":"currentRow","currentColClassName":"currentCol"},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+</div>
+<div id="dimensions-fixed-rowscolumns" class="section level2">
+<h2>Dimensions &amp; Fixed Rows/Columns</h2>
+<p>Column and row dimensions can be customized. For larger data sets, (multiple) top rows and left columns can be frozen.</p>
+<pre class="r"><code>MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+rhandsontable(MAT, width = 700, height = 700) %&gt;%
+  hot_cols(colWidths = 100, fixedColumnsLeft = 1) %&gt;%
+  hot_rows(rowHeights = 50, fixedRowsTop = 1)</code></pre>
+<p><div id="htmlwidget-2226" style="width:700px;height:700px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-2226">{"x":{"data":[[1.4621,0.722,-0.608,0.8189,1.8752],[-0.1157,0.596,-0.5292,-0.0835,1.145],[0.2226,0.9532,-0.358,-1.0715,-0.2578],[-1.2812,-0.2837,0.673,0.717,-0.448],[-0.4131,-0.6565,-0.6904,0.2597,-0.2749],[2.1377,-0.1712,0.5102,-1.6105,0.3304],[0.0272,0.2927,0.568,0.8096,1.7916],[-0.2746,-1.0643,-2.4503,0.2899,0.6834],[-0.4794,-0.0604,-0.2107,-0.9776,1.5649],[0.5391,0.7216,-0.9994,-1.0657,2.4233]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["a","b","c","d","e"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"}],"width":700,"height":700,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv","colWidths":100,"fixedColumnsLeft":1,"rowHeights":50,"fixedRowsTop":1},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+<p>The table can be streched to the full width by passing <code>stretchH = &quot;all&quot;</code> to <code>rhandsontable</code> (or <code>hot_table</code>).</p>
+</div>
+<div id="grouping" class="section level2">
+<h2>Grouping</h2>
+<p>It is also possible to group rows and columns.</p>
+<pre class="r"><code>MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+rhandsontable(MAT) %&gt;%
+  hot_table(groups = list(list(cols = c(0, 1)),
+                          list(rows = c(0, 1))))</code></pre>
+<p><div id="htmlwidget-5904" style="width:672px;height:480px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-5904">{"x":{"data":[[-0.6355,-0.0702,0.7037,0.8017,-0.3773],[-0.0408,-1.5367,-0.2011,-2.5332,0.0562],[0.5615,-1.2373,0.2827,-1.0899,-0.906],[0.0166,0.2937,-0.1697,1.1482,0.6326],[1.5396,-1.0446,0.0329,-0.2746,0.1137],[0.7616,-0.2374,0.8897,-0.6071,0.0662],[0.3763,0.5599,-0.3689,1.0034,-1.1162],[0.7076,0.5358,-0.5207,2.1333,0.0758],[-1.2818,0.417,-0.545,2.691,1.7941],[2.0518,0.6565,-0.5075,0.5603,1.8081]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["a","b","c","d","e"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv","groups":[{"cols":[0,1]},{"rows":[0,1]}]},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+</div>
+<div id="borders" class="section level2">
+<h2>Borders</h2>
+<p>Custom borders can be drawn around cells to highlight specific items. Borders can also be added via the right-click context menu, but these updates will not currently be retained by shiny.</p>
+<pre class="r"><code>MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+rhandsontable(MAT) %&gt;%
+  hot_table(customBorders = list(list(
+    range = list(from = list(row = 1, col = 1),
+                 to = list(row = 2, col = 2)),
+    top = list(width = 2, color = &quot;red&quot;),
+    left = list(width = 2, color = &quot;red&quot;),
+    bottom = list(width = 2, color = &quot;red&quot;),
+    right = list(width = 2, color = &quot;red&quot;))))</code></pre>
+<p><div id="htmlwidget-9962" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-9962">{"x":{"data":[[-1.0286,0.4109,0.3045,-1.4586,0.3695],[-1.6054,-0.5171,0.0186,-0.665,1.5463],[2.7435,-1.7032,0.5348,-1.3529,0.6677],[-1.9812,-1.1494,2.0704,-0.8375,-1.0816],[-0.7375,0.8378,0.0525,2.2972,-0.0135],[-0.0322,-0.227,2.1696,0.7778,0.2232],[0.4048,1.3785,-0.5343,-1.7404,-1.7792],[-0.7741,-0.097,-0.9407,1.0224,-0.7944],[0.4502,1.8829,1.4509,-0.6169,0.1948],[-1.7733,-0.0607,0.6088,0.05,0.9562]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["a","b","c","d","e"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv","customBorders":[{"range":{"from":{"row":1,"col":1},"to":{"row":2,"col":2}},"top":{"width":2,"color":"red"},"left":{"width":2,"color":"red"},"bottom":{"width":2,"color":"red"},"right":{"width":2,"color":"red"}}]},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+</div>
+<div id="validation" class="section level2">
+<h2>Validation</h2>
+<p>Pre-defined validation can be added for numeric columns in two ways:</p>
+<ul>
+<li>specify a min and max and any values within the range to exclude</li>
+<li>similar to a <code>dropdown</code> column, specify allowed values</li>
+</ul>
+<pre class="r"><code>MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+rhandsontable(MAT * 10) %&gt;%
+  hot_validate_numeric(col = 1, min = -50, max = 50, exclude = 40)</code></pre>
+<p><div id="htmlwidget-3891" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-3891">{"x":{"data":[[-12.4331,-16.8848,-20.6327,11.7374,-7.8182],[12.0401,20.7628,-1.0161,8.1058,-6.8431],[2.5219,3.1666,0.4186,-1.107,-3.8779],[-2.1247,-6.0338,6.9068,7.9256,-4.7393],[13.5663,-0.9353,-10.6258,10.874,-3.7818],[4.4186,13.2581,-2.4586,-17.4428,16.2621],[-7.784,3.1029,-8.807,3.966,20.311],[1.44,-9.7424,-11.2255,-14.1991,-9.9817],[3.8667,-14.6433,-0.2685,2.0515,-16.542],[-4.594,5.7876,-2.8417,-3.812,-6.7172]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["a","b","c","d","e"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","renderer":"customRenderer","validator":"function (value, callback) {\n         setTimeout(function(){\n           if (isNaN(parseFloat(value))) {\n             callback(false);\n           }\n           if (['40'].indexOf(value) > -1) { callback(false); }\n           if (value < -50) { callback(false); }\n           if (value > 50) { callback(false); }\n           \n           callback(true);\n         }, 500)\n       }","allowInvalid":false},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.0.validator","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+<pre class="r"><code>rhandsontable(MAT * 10) %&gt;%
+  hot_validate_numeric(col = 1, choices = c(10, 20, 40))</code></pre>
+<p><div id="htmlwidget-2868" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-2868">{"x":{"data":[[-12.4331,-16.8848,-20.6327,11.7374,-7.8182],[12.0401,20.7628,-1.0161,8.1058,-6.8431],[2.5219,3.1666,0.4186,-1.107,-3.8779],[-2.1247,-6.0338,6.9068,7.9256,-4.7393],[13.5663,-0.9353,-10.6258,10.874,-3.7818],[4.4186,13.2581,-2.4586,-17.4428,16.2621],[-7.784,3.1029,-8.807,3.966,20.311],[1.44,-9.7424,-11.2255,-14.1991,-9.9817],[3.8667,-14.6433,-0.2685,2.0515,-16.542],[-4.594,5.7876,-2.8417,-3.812,-6.7172]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["a","b","c","d","e"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","renderer":"customRenderer","validator":"function (value, callback) {\n         setTimeout(function(){\n           if (isNaN(parseFloat(value))) {\n             callback(false);\n           }\n           \n           \n           \n           if (['10','20','40'].indexOf(value) == -1) { callback(false); }\n           callback(true);\n         }, 500)\n       }","allowInvalid":false},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.0.validator","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+<p>For character columns, a vector of allowed options can be specified. A more user-friendly approach may be to use a <code>dropdown</code> column with <code>strict = TRUE</code>.</p>
+<pre class="r"><code>DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = &quot;days&quot;, length.out = 10),
+                stringsAsFactors = FALSE)
+
+rhandsontable(DF) %&gt;%
+  hot_validate_character(col = &quot;big&quot;, choices = LETTERS[1:10])</code></pre>
+<p><div id="htmlwidget-190" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-190">{"x":{"data":[{"val":1,"bool":true,"big":"A","small":"a","dt":"08/05/2015"},{"val":2,"bool":true,"big":"B","small":"b","dt":"08/06/2015"},{"val":3,"bool":true,"big":"C","small":"c","dt":"08/07/2015"},{"val":4,"bool":true,"big":"D","small":"d","dt":"08/08/2015"},{"val":5,"bool":true,"big":"E","small":"e","dt":"08/09/2015"},{"val":6,"bool":true,"big":"F","small":"f","dt":"08/10/2015"},{"val":7,"bool":true,"big":"G","small":"g","dt":"08/11/2015"},{"val":8,"bool":true,"big":"H","small":"h","dt":"08/12/2015"},{"val":9,"bool":true,"big":"I","small":"i","dt":"08/13/2015"},{"val":10,"bool":true,"big":"J","small":"j","dt":"08/14/2015"}],"rClass":"data.frame","rColClasses":{"val":"integer","bool":"logical","big":"character","small":"character","dt":"Date"},"selectCallback":false,"colHeaders":["val","bool","big","small","dt"],"rowHeaders":["1","2","3","4","5","6","7","8","9","10"],"columns":[{"type":"numeric","format":"0","renderer":"customRenderer"},{"type":"checkbox","renderer":"customRenderer"},{"type":"text","renderer":"customRenderer","validator":"function (value, callback) {\n         setTimeout(function() {\n           if (typeof(value) != 'string') {\n             callback(false);\n           }\n           if (['A','B','C','D','E','F','G','H','I','J'].indexOf(value) > -1) { callback(true); }\n           callback(false);\n         }, 500)\n       }","allowInvalid":false},{"type":"text","renderer":"customRenderer"},{"type":"date","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":false,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.2.validator","columns.3.renderer","columns.4.renderer"]}</script></p>
+<p>It is also possible to create a custom validation function in JavaScript.</p>
+<pre class="r"><code>MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+# try to update any cell to 0
+rhandsontable(MAT * 10) %&gt;%
+  hot_cols(validator = &quot;
+           function (value, callback) {
+            setTimeout(function(){
+              callback(value != 0);
+            }, 1000)
+           }&quot;,
+           allowInvalid = FALSE)</code></pre>
+<p><div id="htmlwidget-4857" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-4857">{"x":{"data":[[-3.1403,2.9464,-0.3974,12.0977,-20.5252],[-13.4258,-8.0376,-6.1891,-3.6135,2.1666],[-10.946,24.3507,5.3139,14.7116,19.7996],[-2.8989,-7.1353,-10.0377,3.5793,30.5134],[2.4458,5.3826,23.2947,1.1669,7.9493],[-2.1186,-7.6934,0.0761,-16.9032,6.7844],[28.7405,21.2609,-4.4392,-6.7251,-19.1065],[1.9876,-22.4158,-1.5164,-21.8396,-9.6617],[-3.6563,6.7645,-4.6917,6.1938,-3.2037],[7.7343,17.9461,-15.6759,-2.1822,-3.2685]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["a","b","c","d","e"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","renderer":"customRenderer","validator":"\n           function (value, callback) {\n            setTimeout(function(){\n              callback(value != 0);\n            }, 1000)\n           }","allowInvalid":false},{"type":"numeric","format":"0.00","renderer":"customRenderer","validator":"\n           function (value, callback) {\n            setTimeout(function(){\n              callback(value != 0);\n            }, 1000)\n           }","allowInvalid":false},{"type":"numeric","format":"0.00","renderer":"customRenderer","validator":"\n           function (value, callback) {\n            setTimeout(function(){\n              callback(value != 0);\n            }, 1000)\n           }","allowInvalid":false},{"type":"numeric","format":"0.00","renderer":"customRenderer","validator":"\n           function (value, callback) {\n            setTimeout(function(){\n              callback(value != 0);\n            }, 1000)\n           }","allowInvalid":false},{"type":"numeric","format":"0.00","renderer":"customRenderer","validator":"\n           function (value, callback) {\n            setTimeout(function(){\n              callback(value != 0);\n            }, 1000)\n           }","allowInvalid":false}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.0.validator","columns.1.renderer","columns.1.validator","columns.2.renderer","columns.2.validator","columns.3.renderer","columns.3.validator","columns.4.renderer","columns.4.validator"]}</script></p>
+</div>
+<div id="conditional-formatting" class="section level2">
+<h2>Conditional Formatting</h2>
+<p>Conditional formatting can also be specified via custom JavaScript function.</p>
+<pre class="r"><code>MAT = matrix(runif(100, -1, 1), nrow = 10,
+             dimnames = list(LETTERS[1:10], LETTERS[1:10]))
+diag(MAT) = 1
+MAT[upper.tri(MAT)] = MAT[lower.tri(MAT)]
+rhandsontable(MAT, readOnly = TRUE) %&gt;%
+  hot_cols(renderer = &quot;
+           function (instance, td, row, col, prop, value, cellProperties) {
+             Handsontable.renderers.TextRenderer.apply(this, arguments);
+             if (row == col) {
+              td.style.background = &#39;lightgrey&#39;;
+             } else if (col &gt; row) {
+              td.style.background = &#39;grey&#39;;
+              td.style.color = &#39;grey&#39;;
+             } else if (value &lt; -0.75) {
+              td.style.background = &#39;pink&#39;;
+             } else if (value &gt; 0.75) {
+              td.style.background = &#39;lightgreen&#39;;
+             }
+           }&quot;)</code></pre>
+<p><div id="htmlwidget-9243" style="width:768px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-9243">{"x":{"data":[[1,0.4951,0.6965,-0.7821,0.5255,-0.2693,-0.3102,-0.5381,0.6786,-0.6395],[0.4951,1,-0.362,-0.1775,-0.7179,-0.6585,0.7322,0.5661,0.6829,0.4584],[0.6965,-0.3421,1,-0.5527,-0.925,0.3115,-0.8523,-0.4814,0.2671,0.7761],[-0.362,-0.2693,-0.8523,1,-0.3421,0.7327,0.4161,-0.9814,-0.6616,-0.8879],[-0.7821,-0.6585,0.4161,-0.9814,1,0.3857,0.5672,-0.8357,-0.6072,0.4464],[-0.1775,0.3115,0.5672,-0.8357,0.2671,1,0.3479,0.0982,-0.8193,-0.5663],[-0.5527,0.7327,0.3479,0.0982,-0.6616,-0.4411,1,0.0679,0.6975,0.0375],[0.5255,0.3857,-0.5381,0.0679,-0.6072,-0.6395,-0.8879,1,-0.4411,0.941],[-0.7179,-0.3102,0.5661,0.6786,-0.8193,0.4584,0.4464,0.0375,1,0.9371],[-0.925,0.7322,-0.4814,0.6829,0.6975,0.7761,-0.5663,0.941,0.9371,1]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["A","B","C","D","E","F","G","H","I","J"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"},{"type":"numeric","format":"0.00","readOnly":true,"renderer":"\n           function (instance, td, row, col, prop, value, cellProperties) {\n             Handsontable.renderers.TextRenderer.apply(this, arguments);\n             if (row == col) {\n              td.style.background = 'lightgrey';\n             } else if (col > row) {\n              td.style.background = 'grey';\n              td.style.color = 'grey';\n             } else if (value < -0.75) {\n              td.style.background = 'pink';\n             } else if (value > 0.75) {\n              td.style.background = 'lightgreen';\n             }\n           }"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer","columns.5.renderer","columns.6.renderer","columns.7.renderer","columns.8.renderer","columns.9.renderer"]}</script></p>
+</div>
+<div id="export-to-csv" class="section level2">
+<h2>Export to CSV</h2>
+<p>Use the <code>exportToCsv</code> (experimental) parameter to enable a saving the table data to a csv using a right-click menu option.</p>
+<pre class="r"><code>MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+rhandsontable(MAT) %&gt;%
+  hot_table(exportToCsv = TRUE)</code></pre>
+<p><div id="htmlwidget-471" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-471">{"x":{"data":[[-0.0173,0.7152,-0.7844,-1.527,-0.157],[-2.1234,1.109,-0.1639,0.8206,0.7957],[0.4842,0.4003,-0.0766,-0.8996,-0.4437],[-0.134,1.316,-0.8912,0.5467,1.0718],[-0.5325,-0.6208,-0.6982,0.6316,0.2419],[-0.7259,-0.5464,0.7152,0.4762,1.0423],[0.2865,-1.1201,-1.1662,0.4987,-0.0517],[-0.6854,1.6472,-0.1096,-0.47,-1.7322],[0.3547,-0.0938,0.6634,-0.0715,1.1151],[1.1702,-1.7158,1.5887,0.3761,0.3848]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["a","b","c","d","e"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"},{"type":"numeric","format":"0.00","renderer":"customRenderer"}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv","exportToCsv":true},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+</div>
+<div id="heatmap" class="section level2">
+<h2>Heatmap</h2>
+<p>The <a href="http://old.driven-by-data.net/about/chromajs/">chroma.js</a> library can be used to turn the table into a heatmap.</p>
+<pre class="r"><code>MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+rhandsontable(MAT) %&gt;%
+  hot_heatmap()</code></pre>
+<p><div id="htmlwidget-8732" style="width:672px;height:288px;" class="rhandsontable"></div>
+<script type="application/json" data-for="htmlwidget-8732">{"x":{"data":[[-1.3003,1.7366,1.2411,1.6608,-0.3091],[0.555,0.0157,-1.1483,0.4142,-0.1531],[2.0181,0.2968,1.4785,-0.4058,0.5087],[-1.2113,-0.6125,0.4457,1.1652,1.2032],[-0.7113,-0.4405,-0.4352,1.1715,0.016],[1.4174,-1.0438,-1.4082,1.3638,-0.7192],[-1.3978,0.1195,0.5444,-1.0292,-0.2679],[0.0078,1.1827,1.6477,0.5579,-0.0647],[0.3953,0.1481,-0.6569,0.7506,0.7729],[0.3001,-0.9367,-0.3932,-0.4242,-0.4813]],"rClass":"matrix","rColClasses":"numeric","selectCallback":false,"colHeaders":["a","b","c","d","e"],"rowHeaders":["A","B","C","D","E","F","G","H","I","J"],"columns":[{"type":"numeric","format":"0.00","renderer":"      function (instance, td, row, col, prop, value, cellProperties) {        Handsontable.renderers.TextRenderer.apply(this, arguments);        heatmapScale  = chroma.scale(['#ED6D47', '#17F556']);        if (instance.heatmap[col]) {          mn = instance.heatmap[col].min;          mx = instance.heatmap[col].max;          pt = (parseInt(value, 10) - mn) / (mx - mn);          td.style.backgroundColor = heatmapScale(pt).hex();        }      }      "},{"type":"numeric","format":"0.00","renderer":"      function (instance, td, row, col, prop, value, cellProperties) {        Handsontable.renderers.TextRenderer.apply(this, arguments);        heatmapScale  = chroma.scale(['#ED6D47', '#17F556']);        if (instance.heatmap[col]) {          mn = instance.heatmap[col].min;          mx = instance.heatmap[col].max;          pt = (parseInt(value, 10) - mn) / (mx - mn);          td.style.backgroundColor = heatmapScale(pt).hex();        }      }      "},{"type":"numeric","format":"0.00","renderer":"      function (instance, td, row, col, prop, value, cellProperties) {        Handsontable.renderers.TextRenderer.apply(this, arguments);        heatmapScale  = chroma.scale(['#ED6D47', '#17F556']);        if (instance.heatmap[col]) {          mn = instance.heatmap[col].min;          mx = instance.heatmap[col].max;          pt = (parseInt(value, 10) - mn) / (mx - mn);          td.style.backgroundColor = heatmapScale(pt).hex();        }      }      "},{"type":"numeric","format":"0.00","renderer":"      function (instance, td, row, col, prop, value, cellProperties) {        Handsontable.renderers.TextRenderer.apply(this, arguments);        heatmapScale  = chroma.scale(['#ED6D47', '#17F556']);        if (instance.heatmap[col]) {          mn = instance.heatmap[col].min;          mx = instance.heatmap[col].max;          pt = (parseInt(value, 10) - mn) / (mx - mn);          td.style.backgroundColor = heatmapScale(pt).hex();        }      }      "},{"type":"numeric","format":"0.00","renderer":"      function (instance, td, row, col, prop, value, cellProperties) {        Handsontable.renderers.TextRenderer.apply(this, arguments);        heatmapScale  = chroma.scale(['#ED6D47', '#17F556']);        if (instance.heatmap[col]) {          mn = instance.heatmap[col].min;          mx = instance.heatmap[col].max;          pt = (parseInt(value, 10) - mn) / (mx - mn);          td.style.backgroundColor = heatmapScale(pt).hex();        }      }      "}],"width":null,"height":null,"contextMenu":true,"allowRowEdit":true,"allowColEdit":true,"csvFileName":"download.csv"},"evals":["columns.0.renderer","columns.1.renderer","columns.2.renderer","columns.3.renderer","columns.4.renderer"]}</script></p>
+</div>
+<div id="shiny" class="section level2">
+<h2>Shiny</h2>
+<p>The data grid will be editable by default and can be used as input to a shiny app. A few shiny examples:</p>
+<ul>
+<li><p>Output only</p>
+<pre><code>shiny::runGitHub(&quot;rhandsontable&quot;, &quot;jrowen&quot;, subdir = &quot;inst/examples/rhandsontable_output&quot;)</code></pre></li>
+<li><p>Calculation input</p>
+<pre><code>shiny::runGitHub(&quot;rhandsontable&quot;, &quot;jrowen&quot;, subdir = &quot;inst/examples/rhandsontable_portfolio&quot;)</code></pre></li>
+<li><p>Table callback linked to chart</p>
+<pre><code>shiny::runGitHub(&quot;rhandsontable&quot;, &quot;jrowen&quot;, subdir = &quot;inst/examples/rhandsontable_corr&quot;)</code></pre></li>
+<li><p>Date file editor</p>
+<pre><code>shiny::runGitHub(&quot;rhandsontable&quot;, &quot;jrowen&quot;, subdir = &quot;inst/examples/rhandsontable_datafile&quot;)</code></pre></li>
+<li><p>Multiple input tables</p>
+<pre><code>shiny::runGitHub(&quot;rhandsontable&quot;, &quot;jrowen&quot;, subdir = &quot;inst/examples/rhandsontable_frontier&quot;)</code></pre></li>
+</ul>
+<p>Please file a issue if you experience any problems with the widget or have feature requests. Pull requests are also welcome.</p>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
