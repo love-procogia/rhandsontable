@@ -4,7 +4,7 @@ output:
   html_document:
     css: custom.css
     toc: true
-    toc_depth: 2
+    toc_depth: 3
     self_contained: false
     lib_dir: libs
     theme: readable
@@ -18,35 +18,53 @@ opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE)
 
 ## Introduction
 
-  rhandsontable is an htmlwidget based on the [handsontable.js](www.handsontable.com) library.
+  rhandsontable is a htmlwidget based on the [handsontable.js](www.handsontable.com) library.
 
 > Handsontable is a data grid component with an Excel-like appearance. Built in JavaScript, it integrates with any data source with peak efficiency. It comes with powerful features like data validation, sorting, grouping, data binding, formula support or column ordering.
 ([via](www.handsontable.com))
-
-The table includes support for numeric, logical, character and Date types.  Logical values will appear as check boxes, and the [pikaday.js](https://github.com/dbushell/Pikaday) library is used to specify Date values.
 
 ## Right-Click Menu
 
 Right-clicking in a cell will enable a context menu that includes customizable table actions.  For shiny apps, formatting and comment updates made via the context menu are not currently retained.
 
-## Column Types
+### Add / Remove Rows & Columns
 
-rhandsontable attempts to map R classes to an appropriate handsontable type: `string`, `numeric` and `date`.  Factors will be mapped to `dropdown`, and `NA` values will be displayed as blank cells.  
+By default a user can add or remove table rows and columns, but this functionality can be disabled.
 
 ```{r fig.height = 3}
-DF = data.frame(val = c(NA, 2:10), 
-                bool = c(NA, rep(TRUE, 9)), 
-                big = c(NA, LETTERS[1:9]),
-                small = c(NA, factor(letters[1:9])),
-                dt = c(NA, seq(from = Sys.Date(), by = "days", length.out = 9)),
-                dt_ch = c(NA, as.character(seq(from = Sys.Date(), by = "days", 
-                                               length.out = 9))),
+DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF)
+rhandsontable(DF) %>%
+  hot_table(allowRowEdit = FALSE, allowColEdit = FALSE)
 ```
 
-### Dropdown/Autocomplete
+## Column Types
+
+The table includes support for numeric, logical, character and Date types.  Logical values will appear as check boxes, and the [pikaday.js](https://github.com/dbushell/Pikaday) library is used to specify Date values.
+
+rhandsontable attempts to map R classes to an appropriate handsontable type.  Factors will be mapped to `dropdown`, with the choices specified by `level`.
+
+To improve readability, `NA` values will be displayed as blank cells.  This requires converting columns containing `NA` to characters, and in the case of factors and Dates, may not display the data in the desired format.  It may be beneficial to concert these type of columns to character before passing to `rhandsontable`.
+
+```{r fig.height = 3}
+DF_na = data.frame(val = c(NA, 2:10), 
+                   bool = c(NA, rep(TRUE, 9)), 
+                   big = c(NA, LETTERS[1:9]),
+                   small = c(NA, factor(letters[1:9])),
+                   dt = c(NA, seq(from = Sys.Date(), by = "days", 
+                                  length.out = 9)),
+                   stringsAsFactors = FALSE)
+
+DF_na$small_ch = as.character(DF$small)
+DF_na$dt_ch = as.character(DF$dt)
+
+rhandsontable(DF_na)
+```
+
+### Dropdown / Autocomplete
 
 To control character column values, the column type can be specified as `dropdown` or `autocomplete`.
 
@@ -65,7 +83,7 @@ rhandsontable(DF, rowHeaders = NULL) %>%
 
 ### Password
 
-A column can also be specified as a `password` type, and the whole table can to set to `readOnly` to prevent the user from making changes.  Comments (hover) can also be added to individual cells and will appear as red flags in the upper right of the cell.  Comments can also be added via the right-click context menu, but these updates will not currently be retained by shiny.
+A column can also be specified as a `password` type.
 
 ```{r fig.height = 3}
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
@@ -73,9 +91,8 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 dt = seq(from = Sys.Date(), by = "days", length.out = 10),
                 stringsAsFactors = FALSE)
 
-rhandsontable(DF, readOnly = TRUE) %>%
-  hot_col("small", "password") %>%
-  hot_cell(1, 1, "Test comment")
+rhandsontable(DF) %>%
+  hot_col("small", "password")
 ```
 
 ### Sparkline
@@ -100,10 +117,28 @@ rhandsontable(DF, rowHeaders = NULL) %>%
 Numeric columns are formatted using the [numeral.js](http://numeraljs.com/) library.
 
 ```{r fig.height = 3}
-DF = data.frame(int = 1:10, float = rnorm(10))
+DF = data.frame(int = 1:10, float = rnorm(10), cur = rnorm(10) * 1E5,
+                lrg = rnorm(10) * 1E8, pct = rnorm(10))
+
+rhandsontable(DF) %>%
+  hot_col("float", format = "0.0") %>%
+  hot_col("cur", format = "$0,0.00") %>%
+  hot_col("lrg", format = "0a") %>%
+  hot_col("pct", format = "0%")
+```
+
+## Read Only
+
+The whole table and individual columns can to set to `readOnly` to prevent the user from making changes.
+
+```{r fig.height = 3}
+DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = "days", length.out = 10),
+                stringsAsFactors = FALSE)
 
 rhandsontable(DF, readOnly = TRUE) %>%
-  hot_col("float", format = "0.0")
+  hot_col("val", readOnly = FALSE)
 ```
 
 ## Sorting
@@ -120,9 +155,9 @@ rhandsontable(DF) %>%
   hot_cols(columnSorting = TRUE)
 ```
 
-## Add/Remove Rows & Columns
+## Highlight Rows & Columns
 
-With larger tables it my be desirable to highlight the row and column for a selected cell.  By default a user can add or remove table rows and columns, but this functionality can be disabled.
+With larger tables it my be desirable to highlight the row and column for a selected cell.  
 
 ```{r fig.height = 3}
 DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
@@ -131,11 +166,10 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
                 stringsAsFactors = FALSE)
 
 rhandsontable(DF) %>%
-  hot_table(highlightCol = TRUE, highlightRow = TRUE,
-            allowRowEdit = FALSE, allowColEdit = FALSE)
+  hot_table(highlightCol = TRUE, highlightRow = TRUE)
 ```
 
-## Dimensions & Fixed Rows/Columns
+## Sizing
 
 Column and row dimensions can be customized.  For larger data sets, (multiple) top rows and left columns can be frozen.
 
@@ -144,11 +178,38 @@ MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
 rhandsontable(MAT, width = 700, height = 700) %>%
-  hot_cols(colWidths = 100, fixedColumnsLeft = 1) %>%
-  hot_rows(rowHeights = 50, fixedRowsTop = 1)
+  hot_cols(colWidths = 100) %>%
+  hot_rows(rowHeights = 50)
 ```
 
 The table can be streched to the full width by passing `stretchH = "all"` to `rhandsontable` (or `hot_table`).
+
+## Fixed Rows / Columns
+
+For larger data sets, (multiple) top rows and left columns can be frozen.
+
+```{r fig.height = 7, fig.width = 7}
+MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+rhandsontable(MAT) %>%
+  hot_cols(fixedColumnsLeft = 1) %>%
+  hot_rows(fixedRowsTop = 1)
+```
+
+## Cell Comments
+
+Comments (hover) can also be added to individual cells and will appear as red flags in the upper right of the cell.  Comments can also be added via the right-click context menu, but these updates will not currently be retained by shiny.
+
+```{r fig.height = 3}
+DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = "days", length.out = 10),
+                stringsAsFactors = FALSE)
+
+rhandsontable(DF) %>%
+  hot_cell(1, 1, "Test comment")
+```
 
 ## Grouping
 
@@ -280,27 +341,34 @@ rhandsontable(MAT) %>%
 
 ## Shiny
 
-The data grid will be editable by default and can be used as input to a shiny app.  A few shiny examples:
+The data grid will be editable by default and can be used as input to a shiny app.  A few shiny example links are listed below.  Note that the shinyapps.io links may not work if the has hit the monthly usage limit.
 
-* Output only
+* [Output only](https://jrowen.shinyapps.io/rhandsontable_output)
 ```
-shiny::runGitHub("rhandsontable", "jrowen", subdir = "inst/examples/rhandsontable_output")
+shiny::runGitHub("rhandsontable", "jrowen", 
+                 subdir = "inst/examples/rhandsontable_output")
 ```
-* Calculation input
+* [Calculation input](https://jrowen.shinyapps.io/rhandsontable_portfolio)
 ```
-shiny::runGitHub("rhandsontable", "jrowen", subdir = "inst/examples/rhandsontable_portfolio")
+shiny::runGitHub("rhandsontable", "jrowen", 
+                 subdir = "inst/examples/rhandsontable_portfolio")
 ```
-* Table callback linked to chart
+* [Table callback linked to chart](https://jrowen.shinyapps.io/rhandsontable_corr)
 ```
-shiny::runGitHub("rhandsontable", "jrowen", subdir = "inst/examples/rhandsontable_corr")
+shiny::runGitHub("rhandsontable", "jrowen", 
+                 subdir = "inst/examples/rhandsontable_corr")
 ```
-* Date file editor
+* [Date file editor](https://jrowen.shinyapps.io/rhandsontable_datafile)
 ```
-shiny::runGitHub("rhandsontable", "jrowen", subdir = "inst/examples/rhandsontable_datafile")
+shiny::runGitHub("rhandsontable", "jrowen", 
+                 subdir = "inst/examples/rhandsontable_datafile")
 ```
-* Multiple input tables
+* [Multiple input tables](https://jrowen.shinyapps.io/rhandsontable_frontier)
 ```
-shiny::runGitHub("rhandsontable", "jrowen", subdir = "inst/examples/rhandsontable_frontier")
+shiny::runGitHub("rhandsontable", "jrowen", 
+                 subdir = "inst/examples/rhandsontable_frontier")
 ```
+
+## Suggestions & Contributions
 
 Please file a issue if you experience any problems with the widget or have feature requests.  Pull requests are also welcome.
