@@ -113,6 +113,20 @@ rhandsontable(DF) %>%
   hot_table(allowRowEdit = FALSE, allowColEdit = FALSE)
 ```
 
+### Export to CSV
+
+Use the `exportToCsv` (experimental) parameter to enable a saving the table data to a csv using a right-click menu option.
+
+```{r fig.height = 3}
+MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:5]))
+
+rhandsontable(MAT) %>%
+  hot_table(exportToCsv = TRUE)
+```
+
+Future enhancements will look to expand export options.
+
 ## Numeric Formatting
 
 Numeric columns are formatted using the [numeral.js](http://numeraljs.com/) library.
@@ -189,7 +203,7 @@ The table can be streched to the full width by passing `stretchH = "all"` to `rh
 
 For larger data sets, (multiple) top rows and left columns can be frozen.
 
-```{r fig.height = 7, fig.width = 7}
+```{r fig.height = 3}
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
@@ -214,9 +228,9 @@ rhandsontable(DF) %>%
 
 ## Grouping
 
-It is also possible to group rows and columns.
+It is also possible to group rows and columns.  Note that grouping is not yet supported in markdown documents.
 
-```{r fig.height = 5}
+```{r fig.height = 5, results = "hide"}
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
@@ -245,9 +259,11 @@ rhandsontable(MAT) %>%
 
 ## Validation
 
+### Numeric Columns
+
 Pre-defined validation can be added for numeric columns in two ways:
 
-  * specify a min and max and any values within the range to exclude
+* specify a min and max and any values within the range to exclude
 * similar to a `dropdown` column, specify allowed values
 
 ```{r fig.height = 3}
@@ -260,6 +276,8 @@ rhandsontable(MAT * 10) %>%
 rhandsontable(MAT * 10) %>%
   hot_validate_numeric(col = 1, choices = c(10, 20, 40))
 ```
+
+### Character Columns
 
 For character columns, a vector of allowed options can be specified.  A more user-friendly approach may be to use a `dropdown` column with `strict = TRUE`.
 
@@ -292,7 +310,7 @@ rhandsontable(MAT * 10) %>%
 
 ## Conditional Formatting
 
-Conditional formatting can also be specified via custom JavaScript function.
+Conditional formatting can also be specified via custom JavaScript function.  Future enhancements will look to simplify this interface.
 
 ```{r fig.height = 3, fig.width = 8}
 MAT = matrix(runif(100, -1, 1), nrow = 10,
@@ -314,18 +332,6 @@ rhandsontable(MAT, readOnly = TRUE) %>%
               td.style.background = 'lightgreen';
              }
            }")
-```
-
-## Export to CSV
-
-Use the `exportToCsv` (experimental) parameter to enable a saving the table data to a csv using a right-click menu option.
-
-```{r fig.height = 3}
-MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
-                                                   letters[1:5]))
-
-rhandsontable(MAT) %>%
-  hot_table(exportToCsv = TRUE)
 ```
 
 ## Heatmap
