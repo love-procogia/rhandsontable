@@ -8,6 +8,8 @@ output:
     self_contained: false
     lib_dir: libs
     theme: readable
+    includes:
+      before_body: include/before_body.html
 ---
 ```{r echo = FALSE}
 library(rhandsontable)
