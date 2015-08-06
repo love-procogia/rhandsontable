@@ -192,11 +192,11 @@ rhandsontable(DF) %>%
 
 Column and row dimensions can be customized.  For larger data sets, (multiple) top rows and left columns can be frozen.
 
-```{r fig.height = 7, fig.width = 7}
+```{r fig.height = 6, fig.width = 6}
 MAT = matrix(rnorm(50), nrow = 10, dimnames = list(LETTERS[1:10],
                                                    letters[1:5]))
 
-rhandsontable(MAT, width = 700, height = 700) %>%
+rhandsontable(MAT, width = 600, height = 600) %>%
   hot_cols(colWidths = 100) %>%
   hot_rows(rowHeights = 50)
 ```
@@ -294,6 +294,8 @@ DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
 rhandsontable(DF) %>%
   hot_validate_character(col = "big", choices = LETTERS[1:10])
 ```
+
+### Custom
 
 It is also possible to create a custom validation function in JavaScript.
 
