@@ -23,24 +23,6 @@ opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE)
 > Handsontable is a data grid component with an Excel-like appearance. Built in JavaScript, it integrates with any data source with peak efficiency. It comes with powerful features like data validation, sorting, grouping, data binding, formula support or column ordering.
 ([via](www.handsontable.com))
 
-## Right-Click Menu
-
-Right-clicking in a cell will enable a context menu that includes customizable table actions.  For shiny apps, formatting and comment updates made via the context menu are not currently retained.
-
-### Add / Remove Rows & Columns
-
-By default a user can add or remove table rows and columns, but this functionality can be disabled.
-
-```{r fig.height = 3}
-DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
-                small = letters[1:10],
-                dt = seq(from = Sys.Date(), by = "days", length.out = 10),
-                stringsAsFactors = FALSE)
-
-rhandsontable(DF) %>%
-  hot_table(allowRowEdit = FALSE, allowColEdit = FALSE)
-```
-
 ## Column Types
 
 The table includes support for numeric, logical, character and Date types.  Logical values will appear as check boxes, and the [pikaday.js](https://github.com/dbushell/Pikaday) library is used to specify Date values.
@@ -58,8 +40,9 @@ DF_na = data.frame(val = c(NA, 2:10),
                                   length.out = 9)),
                    stringsAsFactors = FALSE)
 
-DF_na$small_ch = as.character(DF$small)
-DF_na$dt_ch = as.character(DF$dt)
+DF_na$small_ch = as.character(DF_na$small)
+DF_na$dt_ch = c(NA, as.character(seq(from = Sys.Date(), by = "days", 
+                                     length.out = 9)))
 
 rhandsontable(DF_na)
 ```
@@ -110,6 +93,24 @@ DF$chart = rep(jsonlite::toJSON(list(values=rnorm(10),
 
 rhandsontable(DF, rowHeaders = NULL) %>%
   hot_col("chart", renderer = htmlwidgets::JS("renderSparkline"))
+```
+
+## Right-Click Menu
+
+Right-clicking in a cell will enable a context menu that includes customizable table actions.  For shiny apps, formatting and comment updates made via the context menu are not currently retained.
+
+### Add / Remove Rows & Columns
+
+By default a user can add or remove table rows and columns, but this functionality can be disabled.
+
+```{r fig.height = 3}
+DF = data.frame(val = 1:10, bool = TRUE, big = LETTERS[1:10],
+                small = letters[1:10],
+                dt = seq(from = Sys.Date(), by = "days", length.out = 10),
+                stringsAsFactors = FALSE)
+
+rhandsontable(DF) %>%
+  hot_table(allowRowEdit = FALSE, allowColEdit = FALSE)
 ```
 
 ## Numeric Formatting
