@@ -20,10 +20,10 @@ opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE)
 
 ## Introduction
 
-  rhandsontable is a htmlwidget based on the [handsontable.js](www.handsontable.com) library.
+  rhandsontable is a htmlwidget based on the [handsontable.js](https://www.handsontable.com) library.
 
 > Handsontable is a data grid component with an Excel-like appearance. Built in JavaScript, it integrates with any data source with peak efficiency. It comes with powerful features like data validation, sorting, grouping, data binding, formula support or column ordering.
-([via](www.handsontable.com))
+([via](https://www.handsontable.com))
 
 ## Column Types
 
