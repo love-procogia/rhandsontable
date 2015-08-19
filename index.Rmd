@@ -383,6 +383,11 @@ shiny::runGitHub("rhandsontable", "jrowen",
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir = "inst/examples/rhandsontable_frontier")
 ```
+* [A shinydashboard app](https://jrowen.shinyapps.io/rhandsontable_dash)
+```
+shiny::runGitHub("rhandsontable", "jrowen", 
+                 subdir="inst/examples/rhandsontable_dash")
+```
 
 ## Suggestions & Contributions
 
