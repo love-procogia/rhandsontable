@@ -29,7 +29,7 @@ opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE)
 
 The table includes support for numeric, logical, character and Date types.  Logical values will appear as check boxes, and the [pikaday.js](https://github.com/dbushell/Pikaday) library is used to specify Date values.
 
-rhandsontable attempts to map R classes to an appropriate handsontable type.  Factors will be mapped to `dropdown`, with the choices specified by `level` and `allowInvalid` set to `FALSE`.  To allow new levels, set `allowInvalid` to `TRUE` (using `hot_col`; it may also be desirable to set `strict` to `FALSE`).  Custom factor ordering is not preserved.
+rhandsontable attempts to map R classes to an appropriate handsontable type.  Factors will be mapped to `dropdown`, with the choices specified by `level` and `allowInvalid` set to `FALSE`.  To allow new levels, set `allowInvalid` to `TRUE` (using `hot_col`; it may also be desirable to set `strict` to `FALSE`).  Custom factor ordering is preserved, and if new levels are allowed, they will be added to the end.
 
 To improve readability, `NA` values will be displayed as blank cells.  This requires converting columns containing `NA` to characters, and in the case of factors and Dates, may not display the data in the desired format.  It may be beneficial to concert these type of columns to character before passing to `rhandsontable`.
 
