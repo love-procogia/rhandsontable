@@ -176,7 +176,7 @@ rhandsontable(DF, allowedTags = "<em><b><strong><a><big>",
     }")
 ```
 
-For `shiny` apps, use `renderer = htmlwidgets::JS("safeHtmlRenderer")` to display columns with html data.  The allowed html tags default to '<em><b><strong><a><big>', but the (hidden) `allowedTags` parameter can in `rhandsontable` can be used to customize this list.
+For `shiny` apps, use `renderer = htmlwidgets::JS("safeHtmlRenderer")` to display columns with html data.  The allowed html tags default to `<em><b><strong><a><big>`, but the (hidden) `allowedTags` parameter can in `rhandsontable` can be used to customize this list.
 
 ## Right-Click Menu
 
