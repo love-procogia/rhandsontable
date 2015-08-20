@@ -176,6 +176,8 @@ rhandsontable(DF, allowedTags = "<em><b><strong><a><big>",
     }")
 ```
 
+For `shiny` apps, use `renderer = htmlwidgets::JS("safeHtmlRenderer")` to display columns with html data.  The allowed html tags default to '<em><b><strong><a><big>', but the (hidden) `allowedTags` parameter can in `rhandsontable` can be used to customize this list.
+
 ## Right-Click Menu
 
 Right-clicking in a cell will enable a context menu that includes customizable table actions.  For shiny apps, formatting and comment updates made via the context menu are not currently retained.
