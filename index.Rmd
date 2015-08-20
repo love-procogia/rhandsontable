@@ -31,7 +31,7 @@ The table includes support for numeric, logical, character and Date types.  Logi
 
 rhandsontable attempts to map R classes to an appropriate handsontable type.  Factors will be mapped to `dropdown`, with the choices specified by `level` and `allowInvalid` set to `FALSE`.  To allow new levels, set `allowInvalid` to `TRUE` (using `hot_col`; it may also be desirable to set `strict` to `FALSE`).  When running in `shiny`, using `hot_to_r` will preserve custom factor ordering, and if new levels are allowed, they will be added to the end.
 
-```
+```{r fig.height = 3}
 DF = data.frame(integer = 1:10,
                    numeric = rnorm(10),
                    logical = rep(TRUE, 10), 
