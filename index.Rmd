@@ -29,22 +29,38 @@ opts_knit$set(warning = FALSE, error = FALSE, message = FALSE, cache = FALSE)
 
 The table includes support for numeric, logical, character and Date types.  Logical values will appear as check boxes, and the [pikaday.js](https://github.com/dbushell/Pikaday) library is used to specify Date values.
 
-rhandsontable attempts to map R classes to an appropriate handsontable type.  Factors will be mapped to `dropdown`, with the choices specified by `level` and `allowInvalid` set to `FALSE`.  To allow new levels, set `allowInvalid` to `TRUE` (using `hot_col`; it may also be desirable to set `strict` to `FALSE`).  Custom factor ordering is preserved, and if new levels are allowed, they will be added to the end.
+rhandsontable attempts to map R classes to an appropriate handsontable type.  Factors will be mapped to `dropdown`, with the choices specified by `level` and `allowInvalid` set to `FALSE`.  To allow new levels, set `allowInvalid` to `TRUE` (using `hot_col`; it may also be desirable to set `strict` to `FALSE`).  When running in `shiny`, using `hot_to_r` will preserve custom factor ordering, and if new levels are allowed, they will be added to the end.
+
+```
+DF = data.frame(integer = 1:10,
+                   numeric = rnorm(10),
+                   logical = rep(TRUE, 10), 
+                   character = LETTERS[1:10],
+                   factor = factor(letters[1:10], levels = letters[10:1], 
+                                   ordered = TRUE),
+                   factor_allow = factor(letters[1:10], levels = letters[10:1], 
+                                         ordered = TRUE),
+                   date = seq(from = Sys.Date(), by = "days", length.out = 10),
+                   stringsAsFactors = FALSE)
+
+rhandsontable(DF) %>%
+  hot_col("factor_allow", allowInvalid = TRUE)
+```
 
 To improve readability, `NA` values will be displayed as blank cells.  This requires converting columns containing `NA` to characters, and in the case of factors and Dates, may not display the data in the desired format.  It may be beneficial to concert these type of columns to character before passing to `rhandsontable`.
 
 ```{r fig.height = 3}
-DF_na = data.frame(val = c(NA, 2:10), 
-                   bool = c(NA, rep(TRUE, 9)), 
-                   big = c(NA, LETTERS[1:9]),
-                   small = c(NA, factor(letters[1:9])),
-                   dt = c(NA, seq(from = Sys.Date(), by = "days", 
-                                  length.out = 9)),
+DF_na = data.frame(integer = c(NA, 2:10), 
+                   logical = c(NA, rep(TRUE, 9)), 
+                   character = c(NA, LETTERS[1:9]),
+                   factor = c(NA, factor(letters[1:9])),
+                   date = c(NA, seq(from = Sys.Date(), by = "days", 
+                                    length.out = 9)),
                    stringsAsFactors = FALSE)
 
-DF_na$small_ch = as.character(DF_na$small)
-DF_na$dt_ch = c(NA, as.character(seq(from = Sys.Date(), by = "days", 
-                                     length.out = 9)))
+DF_na$factor_ch = as.character(DF_na$factor)
+DF_na$date_ch = c(NA, as.character(seq(from = Sys.Date(), by = "days", 
+                                       length.out = 9)))
 
 rhandsontable(DF_na)
 ```
@@ -356,12 +372,19 @@ rhandsontable(MAT) %>%
 
 ## Shiny
 
-The data grid will be editable by default and can be used as input to a shiny app.  A few shiny example links are listed below.  Note that the shinyapps.io links may not work if the has hit the monthly usage limit.
+The data grid will be editable by default and can be used as input to a `shiny` app.  A few `shiny` and `shinydashboard` example links are listed below.  Note that the shinyapps.io links may not work if the has hit the monthly usage limit.
+
+When using `rhandsontable` and an input, these apps generally use the `hot_to_r` function to convert data to an R data.frame and `shiny::reactiveValues` to store a cached version of the data (see the *Data file editor* example below).  The `rhandsontable` function also includes the `selectCallback ` parameter, which will fire a callback event when a table cell is selected (see the *Table callback linked to chart* example below).
 
 * [Output only](https://jrowen.shinyapps.io/rhandsontable_output)
 ```
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir = "inst/examples/rhandsontable_output")
+```
+* [Date file editor](https://jrowen.shinyapps.io/rhandsontable_datafile)
+```
+shiny::runGitHub("rhandsontable", "jrowen", 
+                 subdir = "inst/examples/rhandsontable_datafile")
 ```
 * [Calculation input](https://jrowen.shinyapps.io/rhandsontable_portfolio)
 ```
@@ -372,11 +395,6 @@ shiny::runGitHub("rhandsontable", "jrowen",
 ```
 shiny::runGitHub("rhandsontable", "jrowen", 
                  subdir = "inst/examples/rhandsontable_corr")
-```
-* [Date file editor](https://jrowen.shinyapps.io/rhandsontable_datafile)
-```
-shiny::runGitHub("rhandsontable", "jrowen", 
-                 subdir = "inst/examples/rhandsontable_datafile")
 ```
 * [Multiple input tables](https://jrowen.shinyapps.io/rhandsontable_frontier)
 ```
