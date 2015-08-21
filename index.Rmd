@@ -121,7 +121,7 @@ rhandsontable(DF, rowHeaders = NULL) %>%
 
 It's also possible to define a custom column renderer function.  For example, it may be desirable to include html in a cell.  The example below mimics [Custom renderers](http://docs.handsontable.com/0.16.1/demo-custom-renderers.html).
 
-```{r fig.height = 4, fig.width = 8}
+```{r fig.height = 5, fig.width = 8}
 DF = data.frame(
   title = c(
     "<a href='http://www.amazon.com/Professional-JavaScript-Developers-Nicholas-Zakas/dp/1118026691'>Professional JavaScript for Web Developers</a>",
@@ -147,7 +147,7 @@ DF = data.frame(
 )
 
 rhandsontable(DF, allowedTags = "<em><b><strong><a><big>", 
-              width = 800, height = 400, rowHeaders = FALSE) %>%
+              width = 800, height = 500, rowHeaders = FALSE) %>%
   hot_cols(colWidths = c(200, 200, 200, 80)) %>%
   hot_col(1:2, renderer = "html") %>%
   hot_col(1:3, renderer = htmlwidgets::JS("safeHtmlRenderer")) %>%
