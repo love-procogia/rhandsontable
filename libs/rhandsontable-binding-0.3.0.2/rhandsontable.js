@@ -15,10 +15,20 @@ HTMLWidgets.widget({
   renderValue: function(el, x, instance) {
 
     // convert json to array
-    x.data = toArray(x.data);
+    if (x.data.length > 0 && x.data[0].constructor === Array) {
+      x.data = x.data;
+    } else {
+      x.data = toArray(x.data.map(function(d) {
+        return x.rColnames.map(function(ky) {
+          return d[ky];
+        });
+      }));
+    }
 
-    x.afterLoadData = this.updateHeatmap;
-    x.beforeChangeRender = this.updateHeatmap;
+    if (x.isHeatmap === true) {
+      x.afterLoadData = this.initHeatmap;
+      x.beforeChangeRender = this.updateHeatmap;
+    }
 
     this.afterChangeCallback(x);
     this.afterCellMetaCallback(x);
@@ -56,7 +66,7 @@ HTMLWidgets.widget({
 
       if (HTMLWidgets.shinyMode && changes) {
         if (this.sortIndex && this.sortIndex.length !== 0) {
-          c = [this.sortIndex[changes[0][0]][0], changes.slice(1, 1 + 3)];
+          c = [this.sortIndex[changes[0][0]][0], changes[0].slice(1, 1 + 3)];
         } else {
           c = changes;
         }
@@ -114,12 +124,18 @@ HTMLWidgets.widget({
 
     x.afterCreateRow = function(ind, ct) {
 
-      if (HTMLWidgets.shinyMode)
+      if (HTMLWidgets.shinyMode) {
+
+        for(var i = 0, colCount = this.countCols(); i < colCount ; i++) {
+          this.setDataAtCell(ind, i, this.params.columns[i].default);
+        }
+
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
           changes: { event: "afterCreateRow", ind: ind, ct: ct },
           params: this.params
         });
+      }
     };
 
     x.afterRemoveRow = function(ind, ct) {
@@ -155,30 +171,29 @@ HTMLWidgets.widget({
   },
 
   // see http://handsontable.com/demo/heatmaps.html
+  initHeatmap: function(firstTime, source) {
+    this.heatmap = [];
+
+    for(var i = 0, colCount = this.countCols(); i < colCount ; i++) {
+      this.heatmap[i] = generateHeatmapData.call(this, i);
+    }
+  },
+
   updateHeatmap: function(change, source) {
-
-    function generateHeatmapData(colId) {
-
-      var values = this.getDataAtCol(colId);
-
-      return {
-        min: Math.min.apply(null, values),
-        max: Math.max.apply(null, values)
-      };
-    }
-
-    if (change) {
-      this.heatmap[change[0][1]] = generateHeatmapData.call(this, change[0][1]);
-    } else {
-      this.heatmap = [];
-
-      for(var i = 0, colCount = this.countCols(); i < colCount ; i++) {
-        this.heatmap[i] = generateHeatmapData.call(this, i);
-      }
-    }
+    this.heatmap[change[0][1]] = generateHeatmapData.call(this, change[0][1]);
   }
 
 });
+
+function generateHeatmapData(colId) {
+
+  var values = this.getDataAtCol(colId);
+
+  return {
+    min: Math.min.apply(null, values),
+    max: Math.max.apply(null, values)
+  };
+}
 
 // https://stackoverflow.com/questions/22477612/converting-array-of-objects-into-array-of-arrays
 function toArray(input) {
