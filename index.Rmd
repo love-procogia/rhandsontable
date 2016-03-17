@@ -7,7 +7,7 @@ output:
     toc_depth: 3
     self_contained: false
     lib_dir: libs
-    theme: readable
+    theme: default
     includes:
       before_body: include/before_body.html
 ---
