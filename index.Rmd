@@ -7,7 +7,7 @@ output:
     toc_depth: 3
     self_contained: false
     lib_dir: libs
-    theme: default
+    theme: paper
     includes:
       before_body: include/before_body.html
 ---
@@ -271,6 +271,19 @@ rhandsontable(DF, width = 550, height = 300) %>%
   hot_col("cur", format = "$0,0.00") %>%
   hot_col("lrg", format = "0a") %>%
   hot_col("pct", format = "0%")
+```
+
+### Specify Locale
+
+The `language` parameter for `hot_col` can be used to change the locale.  See the [numeral.js](http://numeraljs.com/) library for language options.
+
+```{r}
+DF = data.frame(dollar = rnorm(10), euro = rnorm(10), yen = rnorm(10))
+
+rhandsontable(DF * 1000, width = 550, height = 300) %>%
+  hot_col("dollar", format = "$0,000.00", language = "en") %>%
+  hot_col("euro", format = "0,000.00 $", language = "de") %>%
+  hot_col("yen", format = "$0,000.00", language = "ja")
 ```
 
 ## Read Only
