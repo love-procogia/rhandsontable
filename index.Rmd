@@ -2,12 +2,13 @@
 title: "rhandsontable"
 output:
   html_document:
-    css: custom.css
+    #css: custom.css
     toc: true
-    toc_depth: 3
+    toc_float: true
+    #toc_depth: 3
     self_contained: false
     lib_dir: libs
-    theme: paper
+    #theme: paper
     includes:
       before_body: include/before_body.html
 ---
@@ -342,7 +343,24 @@ rhandsontable(MAT, width = 600, height = 600) %>%
   hot_rows(rowHeights = 50)
 ```
 
-The table can be streched to the full width by passing `stretchH = "all"` to `rhandsontable` (or `hot_table`).
+### Row Header Width
+
+The width of the row header column can be customized using `rowHeaderWidth`.
+
+```{r fig.height = 6, fig.width = 6}
+rhandsontable(mtcars, rowHeaderWidth = 200)
+```
+
+### Streching
+
+The table can be streched to the full width by using `stretchH`.
+
+```{r fig.height = 6, fig.width = 6}
+MAT = matrix(rnorm(30), nrow = 10, dimnames = list(LETTERS[1:10],
+                                                   letters[1:3]))
+
+rhandsontable(MAT, width = 600, height = 300, stretchH = "all")
+```
 
 ## Fixed Rows / Columns
 
