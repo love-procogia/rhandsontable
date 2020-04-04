@@ -464,7 +464,7 @@ hot_col = function(hot, col, type = NULL, format = NULL, source = NULL,
     if (!is.null(renderer)) cols[[i]]$renderer = JS(renderer)
 
     if (!is.null(list(...)))
-      cols[[i]] = c(cols[[i]], list(...))
+      cols[[i]] = modifyList(cols[[i]], list(...))
 
     className = c(halign, valign)
     if (!is.null(className)) {
