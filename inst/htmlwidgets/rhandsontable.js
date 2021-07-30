@@ -40,6 +40,12 @@ HTMLWidgets.widget({
       $("#" + el.id).css('col.rowHeader', x.rowHeaderWidth + 'px');
     }
 
+    // convert formulas engine from string to window object
+    //  since no real way to do from R options
+    if(x.formulas && typeof(x.formulas) === "object") {
+      x.formulas.engine = window[x.formulas.engine];
+    }
+
     //this.afterRender(x);
 
     this.params = x;
@@ -361,46 +367,6 @@ function customRenderer(instance, TD, row, col, prop, value, cellProperties) {
       type = cellProperties.type;
     }
     Handsontable.renderers.getRenderer(type)(instance, TD, row, col, prop, value, cellProperties);
-}
-
-function renderSparkline(instance, td, row, col, prop, value, cellProperties) {
-  try {
-    val = JSON.parse(value);
-
-    nm = 'sparklines_r' + row + '_c' + col;
-    td.innerHTML = '<span class=\"' + nm + '\"></span>';
-
-    // adjust for cell padding
-    if (val.options && val.options.type &&
-      ['bar', 'tristate'].indexOf(val.options.type[0]) > -1) {
-      val.options.barSpacing = 1;
-      val.options.barWidth = Math.max(1, Math.round((instance.getColWidth(col) - 8 - (val.values.length - 1)) / val.values.length));
-    } else {
-      if (!val.options) {
-        val.options = {};
-      }
-      val.options.width = (instance.getColWidth(col) - 8) + "px";
-    }
-
-    $('.' + nm).sparkline(val.values, val.options);
-  } catch(err) {
-    td.innerHTML = '';
-  }
-
-  return td;
-}
-
-// http://docs.handsontable.com/0.16.1/demo-custom-renderers.html
-function strip_tags(input, allowed) {
-  var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi,
-    commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
-
-  // making sure the allowed arg is a string containing only tags in lowercase (<a><b><c>)
-  allowed = (((allowed || "") + "").toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
-
-  return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
-    return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
-  });
 }
 
 function safeHtmlRenderer(instance, td, row, col, prop, value, cellProperties) {
