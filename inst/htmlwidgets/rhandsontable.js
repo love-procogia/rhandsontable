@@ -48,7 +48,7 @@ HTMLWidgets.widget({
 
     //this.afterRender(x);
 
-    this.params = x;
+    this.params = Object.assign({}, x, {formulas: undefined}); // remove formulas to prevent circular
 
     if (instance.hot) { // update existing instance
       if (x.debug && x.debug > 0) {
@@ -138,7 +138,7 @@ HTMLWidgets.widget({
           Shiny.onInputChange(this.rootElement.id, {
             data: this.getData(),
             changes: { event: "afterChange", changes: c, source: source },
-            params: this.params
+            params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
           });
         } else if (source == "loadData" && this.params) {
 
@@ -151,7 +151,7 @@ HTMLWidgets.widget({
           Shiny.onInputChange(this.rootElement.id, {
             data: this.getData(),
             changes: { event: "afterChange", changes: null },
-            params: this.params
+            params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
           });
         }
       }
@@ -196,7 +196,7 @@ HTMLWidgets.widget({
         Shiny.onInputChange(this.rootElement.id + "_comment", {
           data: this.getData(),
           comment: { r: r + 1, c: c + 1, key: key, val: val},
-          params: this.params
+          params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
         });
       }
 
@@ -221,7 +221,7 @@ HTMLWidgets.widget({
         Shiny.onInputChange(this.rootElement.id + "_select", {
           data: this.getData(),
           select: { r: r + 1, c: c + 1, r2: r2 + 1, c2: c2 + 1},
-          params: this.params
+          params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
         });
       }
 
@@ -248,7 +248,7 @@ HTMLWidgets.widget({
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
           changes: { event: "afterCreateRow", ind: ind, ct: ct },
-          params: this.params
+          params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
         });
       }
     };
@@ -264,7 +264,7 @@ HTMLWidgets.widget({
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
           changes: { event: "afterRemoveRow", ind: ind, ct: ct },
-          params: this.params
+          params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
         });
     };
 
@@ -279,7 +279,7 @@ HTMLWidgets.widget({
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
           changes: { event: "afterCreateCol", ind: ind, ct: ct },
-          params: this.params
+          params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
         });
     };
 
@@ -294,7 +294,7 @@ HTMLWidgets.widget({
         Shiny.onInputChange(this.rootElement.id, {
           data: this.getData(),
           changes: { event: "afterRemoveCol", ind: ind, ct: ct },
-          params: this.params
+          params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
         });
     };
 
