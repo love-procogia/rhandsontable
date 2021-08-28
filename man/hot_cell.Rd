@@ -13,7 +13,7 @@ hot_cell(hot, row, col, comment = NULL, readOnly = NULL)
 
 \item{col}{column name or index}
 
-\item{comment}{character comment to add to cell}
+\item{comment}{list of form list(value = "...comment_text") or list(value = "...comment_text", readOnly = TRUE or FALSE)}
 
 \item{readOnly}{logical making the cell read-only}
 }

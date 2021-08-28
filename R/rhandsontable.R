@@ -8,7 +8,6 @@
 #'  will be used. Setting to \code{NULL} will omit.
 #' @param rowHeaders a vector of row names. If missing \code{rownames}
 #'  will be used. Setting to \code{NULL} will omit.
-#' @param comments matrix or data.frame of comments; NA values are ignored
 #' @param useTypes logical specifying whether column classes should be mapped to
 #'  equivalent Javascript types.  Note that
 #'  Handsontable does not support column add/remove when column types
@@ -34,7 +33,7 @@
 #' rhandsontable(DF, rowHeaders = NULL)
 #' @seealso \code{\link{hot_table}}, \code{\link{hot_cols}}, \code{\link{hot_rows}}, \code{\link{hot_cell}}
 #' @export
-rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
+rhandsontable <- function(data, colHeaders, rowHeaders,
                           useTypes = TRUE, readOnly = NULL,
                           selectCallback = FALSE,
                           width = NULL, height = NULL, digits = 4,
@@ -151,17 +150,6 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
       hot = hot %>% hot_col(x, readOnly = readOnly)
   }
 
-  hot = hot %>% hot_table(enableComments = !is.null(comments), ...)
-
-  if (!is.null(comments)) {
-    inds = as.data.frame(which(!is.na(comments), arr.ind = TRUE))
-    for (i in 1:nrow(inds))
-      hot = hot %>%
-        hot_cell(inds$row[i], inds$col[i],
-                 comment = comments[inds$row[i], inds$col[i]])
-    #hot$x$rComments = jsonlite::toJSON(comments)
-  }
-
   hot
 }
 
@@ -198,7 +186,7 @@ rhandsontable <- function(data, colHeaders, rowHeaders, comments = NULL,
 #' @export
 hot_table = function(hot, contextMenu = TRUE, stretchH = "none",
                      customBorders = NULL, highlightRow = NULL,
-                     highlightCol = NULL, enableComments = FALSE,
+                     highlightCol = NULL, enableComments = NULL,
                      overflow = NULL, rowHeaderWidth = NULL, ...) {
   if (!is.null(stretchH)) hot$x$stretchH = stretchH
   if (!is.null(customBorders)) hot$x$customBorders = customBorders
@@ -537,7 +525,7 @@ hot_row = function(hot, row, readOnly = NULL) {
 #' @param hot rhandsontable object
 #' @param row numeric row index
 #' @param col column name or index
-#' @param comment character comment to add to cell
+#' @param comment list of form list(value = "...comment_text") or list(value = "...comment_text", readOnly = TRUE or FALSE)
 #' @param readOnly logical making the cell read-only
 #' @examples
 #' library(rhandsontable)
@@ -557,7 +545,7 @@ hot_cell = function(hot, row, col, comment = NULL, readOnly = NULL) {
 
   cell = list(row = row - 1, col = col - 1)
 
-  if (!is.null(comment)) cell$comment = list(value = comment)
+  if (!is.null(comment)) cell$comment = comment
   if (!is.null(readOnly)) cell$readOnly = readOnly
 
   hot$x$cell = c(hot$x$cell, list(cell))

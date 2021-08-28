@@ -8,7 +8,6 @@ rhandsontable(
   data,
   colHeaders,
   rowHeaders,
-  comments = NULL,
   useTypes = TRUE,
   readOnly = NULL,
   selectCallback = FALSE,
@@ -28,8 +27,6 @@ will be used. Setting to \code{NULL} will omit.}
 
 \item{rowHeaders}{a vector of row names. If missing \code{rownames}
 will be used. Setting to \code{NULL} will omit.}
-
-\item{comments}{matrix or data.frame of comments; NA values are ignored}
 
 \item{useTypes}{logical specifying whether column classes should be mapped to
 equivalent Javascript types.  Note that
