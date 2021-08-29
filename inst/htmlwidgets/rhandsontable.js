@@ -55,8 +55,20 @@ HTMLWidgets.widget({
         console.log("rhandsontable: update table");
       }
 
+      // try to preserve multi column sort order that now gets lost in handsontable 9
+      //  get sort config applied before updating handsontable and add to params
+      //  so we can use in hooks
+      var sortconfig = [];
+      if(x.multiColumnSorting === true) {
+        try {
+          sortconfig = instance.hot.getPlugin("multiColumnSorting").getSortConfig().slice(0);
+          x._oldMultiColumnSort = sortconfig;
+        } catch(e) {}
+      }
+
       instance.hot.params = x;
       instance.hot.updateSettings(x);
+
     } else {  // create new instance
       if (x.debug && x.debug > 0) {
         console.log("rhandsontable: new table");
