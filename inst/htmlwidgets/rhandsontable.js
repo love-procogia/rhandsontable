@@ -46,6 +46,11 @@ HTMLWidgets.widget({
       x.formulas.engine = window[x.formulas.engine];
     }
 
+    // add ability for a user to specify options from JavaScript function
+    if(x.hasOwnProperty('jsOptions') && typeof(x.jsOptions) === 'function') {
+      x = Object.assign(x, x.jsOptions());
+    }
+
     //this.afterRender(x);
 
     this.params = Object.assign({}, x, {formulas: undefined}); // remove formulas to prevent circular
