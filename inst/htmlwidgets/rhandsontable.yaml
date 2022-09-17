@@ -3,7 +3,7 @@ dependencies:
  - name: handsontable
    version: 9.0.2
    src: "htmlwidgets/lib/handsontable"
-   script: [handsontable.full.min.js,de-DE.js]
+   script: [handsontable.full.min.js, de-DE.js, de-CH.js]
    stylesheet: handsontable.full.min.css
  - name: numbro.languages
    version: 1.11.1
