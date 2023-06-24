@@ -73,6 +73,7 @@ HTMLWidgets.widget({
 
       instance.hot.params = x;
       instance.hot.updateSettings(x);
+      instance.hot.loadData(x.data);
 
     } else {  // create new instance
       if (x.debug && x.debug > 0) {
@@ -91,6 +92,7 @@ HTMLWidgets.widget({
 
       instance.hot.params = x;
       instance.hot.updateSettings(x);
+      instance.hot.loadData(x.data);
 
       var searchField = document.getElementById('searchField');
       if (typeof(searchField) != 'undefined' && searchField != null) {
