@@ -55,8 +55,6 @@ HTMLWidgets.widget({
 
     this.params = Object.assign({}, x, {formulas: undefined}); // remove formulas to prevent circular
 
-    const {data, ...xWithoutData} = x;
-
     if (instance.hot) { // update existing instance
       if (x.debug && x.debug > 0) {
         console.log("rhandsontable: update table");
@@ -74,9 +72,7 @@ HTMLWidgets.widget({
       }
 
       instance.hot.params = x;
-      // do we need the more aggressive loadData here instead of updateData
-      instance.hot.loadData(data);
-      instance.hot.updateSettings(xWithoutData);
+      instance.hot.updateSettings(x);
 
     } else {  // create new instance
       if (x.debug && x.debug > 0) {
@@ -94,8 +90,7 @@ HTMLWidgets.widget({
       }
 
       instance.hot.params = x;
-      instance.hot.loadData(data);
-      instance.hot.updateSettings(xWithoutData);
+      instance.hot.updateSettings(x);
 
       var searchField = document.getElementById('searchField');
       if (typeof(searchField) != 'undefined' && searchField != null) {
@@ -162,7 +157,7 @@ HTMLWidgets.widget({
             changes: { event: "afterChange", changes: c, source: source },
             params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
           });
-        } else if (source == "loadData" && this.params) {
+        } else if ((source === "loadData" || source === "updateData") && this.params) {
 
           if (this.params && this.params.debug) {
             if (this.params.debug > 0) {
