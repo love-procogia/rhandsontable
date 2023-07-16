@@ -157,7 +157,7 @@ HTMLWidgets.widget({
             changes: { event: "afterChange", changes: c, source: source },
             params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
           });
-        } else if ((source === "loadData") && this.params) { // capture source === "updateData" in hooke below
+        } else if ((source === "loadData" || source === "updateData") && this.params) {
 
           if (this.params && this.params.debug) {
             if (this.params.debug > 0) {
