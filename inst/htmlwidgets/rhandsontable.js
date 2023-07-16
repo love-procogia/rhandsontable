@@ -157,7 +157,7 @@ HTMLWidgets.widget({
             changes: { event: "afterChange", changes: c, source: source },
             params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
           });
-        } else if ((source === "loadData" || source === "updateData") && this.params) {
+        } else if ((source === "loadData") && this.params) { // capture source === "updateData" in hooke below
 
           if (this.params && this.params.debug) {
             if (this.params.debug > 0) {
@@ -174,6 +174,26 @@ HTMLWidgets.widget({
       }
 
     };
+
+    x.afterUpdateData = function(sourceData, initialLoad, source) {
+      if (this.params && this.params.debug) {
+        if (this.params.debug > 0) {
+          console.log("afterUpdateData: " + source);
+        }
+        if (this.params.debug > 1) {
+          console.log("afterUpdateData:");
+          console.log(sourceData);
+        }
+      }
+
+      if (HTMLWidgets.shinyMode) {
+        Shiny.onInputChange(this.rootElement.id, {
+          data: this.getData(),
+          changes: { event: "afterUpdateData", changes: null },
+          params: Object.assign({}, this.params, {formulas: undefined}) // remove formulas to prevent circular
+        });
+      }
+    }
 
     x.afterLoadData = function(firstTime) {
       if (this.params && this.params.debug) {
